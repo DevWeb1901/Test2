@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deza Store – Top Up Robux</title>
+
+<style>
+:root{
+  --primary:#2ecc71;
+  --bg:#f5f6f7;
+  --card:#ffffff;
+  --text:#222;
+  --muted:#888;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system}
+body{margin:0;background:var(--bg);color:var(--text)}
+
+header{
+  background:#fff;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 2px 10px rgba(0,0,0,.05)
+}
+.logo{
+  font-weight:900;
+  font-size:20px;
+}
+.menu{font-size:22px}
+
+.banner{
+  margin:16px;
+  border-radius:14px;
+  overflow:hidden;
+}
+.banner img{
+  width:100%;
+  display:block;
+}
+
+.container{padding:0 16px 120px}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,.05)
+}
+
+h2{margin:0 0 12px;font-size:18px}
+
+.input{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1.5px solid #ddd;
+  font-size:15px;
+}
+.input.error{border-color:red}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.pkg{
+  border:2px solid #eaeaea;
+  border-radius:12px;
+  padding:14px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+.pkg.active{
+  border-color:var(--primary);
+  background:#ecfff4;
+}
+.pkg b{display:block}
+
+.total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:700;
+  margin-top:10px;
+}
+
+button{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:12px;
+  background:var(--primary);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+.error-text{
+  color:red;
+  font-size:13px;
+  margin-top:6px;
+  display:none;
+}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal.active{display:flex}
+.modal-box{
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  width:100%;
+  max-width:420px;
+}
+.modal-box h3{margin-top:0}
+.step{
+  background:#f5f5f5;
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:8px;
+  font-size:14px;
+}
+.close{
+  background:#ddd;
+  color:#000;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">DEZA STORE</div>
+  <div class="menu">☰</div>
+</header>
+
+<div class="banner">
+  <!-- BANNER TOKO ROBUX -->
+  <img src="https://i.imgur.com/7bKJc6E.jpg" alt="Toko Robux">
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Username Roblox</h2>
+    <input id="username" class="input" placeholder="Ketik username Roblox">
+    <div id="userError" class="error-text">Username Roblox wajib diisi</div>
+  </div>
+
+  <div class="card">
+    <h2>Pilih Cepat</h2>
+    <div class="quick">
+      <div class="pkg" data-rbx="100" data-price="11900"><b>100 RBX</b>Rp11.900</div>
+      <div class="pkg" data-rbx="200" data-price="23800"><b>200 RBX</b>Rp23.800</div>
+      <div class="pkg" data-rbx="300" data-price="35700"><b>300 RBX</b>Rp35.700</div>
+      <div class="pkg" data-rbx="400" data-price="47600"><b>400 RBX</b>Rp47.600</div>
+    </div>
+    <div class="total">
+      <span>Total Biaya</span>
+      <span id="total">Rp0</span>
+    </div>
+    <button id="buyBtn">Lanjutkan Pembelian</button>
+  </div>
+
+</div>
+
+<!-- MODAL GAMEPASS -->
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <h3>Gamepass Tidak Ditemukan</h3>
+    <p>Kami tidak menemukan gamepass milik kamu.</p>
+    <b>Cara Membuat Gamepass:</b>
+
+    <div class="step">1. Masuk Roblox → Create → Experiences</div>
+    <div class="step">2. Pilih game kamu</div>
+    <div class="step">3. Klik Monetization → Game Passes</div>
+    <div class="step">4. Create Gamepass</div>
+    <div class="step">5. Set harga sesuai Robux</div>
+    <div class="step">6. Kirim link gamepass ke Deza Store</div>
+
+    <button class="close" onclick="closeModal()">Tutup</button>
+  </div>
+</div>
+
+<script>
+let selectedPrice = 0;
+
+document.querySelectorAll('.pkg').forEach(p=>{
+  p.onclick=()=>{
+    document.querySelectorAll('.pkg').forEach(x=>x.classList.remove('active'))
+    p.classList.add('active')
+    selectedPrice = p.dataset.price
+    document.getElementById('total').innerText =
+      'Rp' + Number(selectedPrice).toLocaleString('id-ID')
+  }
+})
+
+document.getElementById('buyBtn').onclick=()=>{
+  const user = document.getElementById('username')
+  if(user.value.trim()===""){
+    user.classList.add('error')
+    document.getElementById('userError').style.display='block'
+    return
+  }
+  user.classList.remove('error')
+  document.getElementById('userError').style.display='none'
+
+  // simulasi cari gamepass
+  setTimeout(()=>{
+    document.getElementById('modal').classList.add('active')
+  },800)
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('active')
+}
+</script>
+
+</body>
+</html>
